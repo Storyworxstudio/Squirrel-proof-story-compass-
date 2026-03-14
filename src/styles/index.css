@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-zinc-950 text-zinc-100 antialiased;
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-2 ring-brand-500/60 ring-offset-1 ring-offset-zinc-950;
+  }
+
+  ::selection {
+    @apply bg-brand-500/30 text-zinc-100;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-zinc-700 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-zinc-600;
+  }
+}
+
+@layer components {
+  .beat-card {
+    @apply rounded-2xl border border-zinc-800 bg-zinc-900 p-5
+           transition-all duration-200;
+  }
+
+  .beat-card:hover {
+    @apply border-zinc-700;
+  }
+
+  .beat-card:focus-within {
+    @apply border-zinc-600;
+  }
+
+  .btn-primary {
+    @apply rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white
+           hover:bg-brand-400 active:bg-brand-600 transition-colors;
+  }
+
+  .btn-ghost {
+    @apply rounded-lg px-4 py-2 text-sm font-semibold text-zinc-400
+           hover:bg-zinc-800 hover:text-zinc-200 active:bg-zinc-700 transition-colors;
+  }
+}
