@@ -1,0 +1,11 @@
+name = "beat-sheet-tool-api"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# KV namespace for storing beat sheets (create with: wrangler kv:namespace create SHEETS)
+# [[kv_namespaces]]
+# binding = "SHEETS"
+# id = "YOUR_KV_NAMESPACE_ID"
+
+[vars]
+ENVIRONMENT = "development"
