@@ -7,7 +7,7 @@ export default function Home() {
     <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
       <div className="max-w-lg">
         <p className="text-xs text-brand-500 font-bold uppercase tracking-[0.25em] mb-4">
-          Your Framework
+          Storyworx
         </p>
 
         <h1 className="text-4xl font-bold text-zinc-100 mb-4 leading-tight tracking-tight">
