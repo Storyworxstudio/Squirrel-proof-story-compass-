@@ -1,7 +1,33 @@
-import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+
+const PRICE_LAUNCH   = import.meta.env.VITE_STRIPE_PRICE_LAUNCH
+const PRICE_REGULAR  = import.meta.env.VITE_STRIPE_PRICE_REGULAR
 
 export default function Home() {
-  const navigate = useNavigate()
+  const [loading, setLoading] = useState(null) // 'launch' | 'regular' | null
+  const [error, setError]     = useState(null)
+
+  async function handleCheckout(priceId, key) {
+    setLoading(key)
+    setError(null)
+    try {
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ priceId }),
+      })
+      const data = await res.json()
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        setError(data.error ?? 'Something went wrong. Please try again.')
+        setLoading(null)
+      }
+    } catch {
+      setError('Could not connect. Please try again.')
+      setLoading(null)
+    }
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
@@ -39,15 +65,34 @@ export default function Home() {
           </span>
         </div>
 
+        {/* Primary CTA — Launch Special */}
         <button
-          onClick={() => navigate('/sheet')}
-          className="btn-primary text-base px-8 py-3 rounded-xl"
+          onClick={() => handleCheckout(PRICE_LAUNCH, 'launch')}
+          disabled={loading !== null}
+          className="w-full btn-primary text-base px-8 py-4 rounded-xl mb-3
+                     disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          Start Writing
+          {loading === 'launch' ? 'Redirecting…' : 'Get Access — Launch Special $29'}
         </button>
 
-        <p className="text-xs text-zinc-700 mt-4">
-          No account needed. Your work stays in your browser.
+        {/* Secondary CTA — Regular Price */}
+        <button
+          onClick={() => handleCheckout(PRICE_REGULAR, 'regular')}
+          disabled={loading !== null}
+          className="w-full text-sm font-medium px-8 py-3 rounded-xl
+                     border border-zinc-700 text-zinc-400 hover:text-zinc-200
+                     hover:border-zinc-500 bg-zinc-900 hover:bg-zinc-800
+                     transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {loading === 'regular' ? 'Redirecting…' : 'Regular Price — $49'}
+        </button>
+
+        {error && (
+          <p className="text-xs text-rose-400 mt-4">{error}</p>
+        )}
+
+        <p className="text-xs text-zinc-700 mt-5">
+          Secure checkout via Stripe. One-time payment, lifetime access.
         </p>
       </div>
     </div>

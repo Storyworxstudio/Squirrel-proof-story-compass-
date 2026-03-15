@@ -36,6 +36,11 @@ export default {
       return new Response(null, { headers: CORS_HEADERS })
     }
 
+    // Route: /api/create-checkout-session
+    if (pathname === '/api/create-checkout-session' && request.method === 'POST') {
+      return createCheckoutSession(request, env)
+    }
+
     // Route: /api/sheets
     if (pathname === '/api/sheets') {
       if (request.method === 'GET') return listSheets(env)
@@ -53,6 +58,37 @@ export default {
 
     return notFound('Route not found')
   },
+}
+
+async function createCheckoutSession(request, env) {
+  if (!env.STRIPE_SECRET_KEY) return json({ error: 'Stripe not configured' }, 503)
+
+  const body = await request.json().catch(() => null)
+  if (!body?.priceId) return json({ error: 'priceId required' }, 400)
+
+  const params = new URLSearchParams({
+    mode: 'payment',
+    'line_items[0][price]': body.priceId,
+    'line_items[0][quantity]': '1',
+    success_url: 'https://squirrel-proof-story-compass-interactive.pages.dev/success',
+    cancel_url: 'https://squirrel-proof-story-compass-interactive.pages.dev/',
+  })
+
+  const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${env.STRIPE_SECRET_KEY}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: params.toString(),
+  })
+
+  const session = await response.json()
+  if (!response.ok) {
+    return json({ error: session.error?.message ?? 'Stripe error' }, 502)
+  }
+
+  return json({ url: session.url })
 }
 
 async function listSheets(env) {
