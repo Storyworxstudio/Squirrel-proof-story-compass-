@@ -1,6 +1,9 @@
 import { useState } from 'react'
 
-const ACCESS_PASSWORD = import.meta.env.VITE_ACCESS_PASSWORD
+const ACCESS_PASSWORD = (import.meta.env.VITE_ACCESS_PASSWORD ?? '').trim()
+
+// Debug: remove once password gate is confirmed working
+console.log('[PasswordGate] VITE_ACCESS_PASSWORD =', JSON.stringify(ACCESS_PASSWORD))
 
 export default function PasswordGate({ children }) {
   const [input, setInput]       = useState('')
@@ -11,7 +14,7 @@ export default function PasswordGate({ children }) {
 
   function handleSubmit(e) {
     e.preventDefault()
-    if (input === ACCESS_PASSWORD) {
+    if (input.trim() === ACCESS_PASSWORD) {
       setUnlocked(true)
     } else {
       setError(true)
