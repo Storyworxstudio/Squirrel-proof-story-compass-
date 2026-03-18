@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 const PRICE_LAUNCH   = import.meta.env.VITE_STRIPE_PRICE_LAUNCH
 const PRICE_REGULAR  = import.meta.env.VITE_STRIPE_PRICE_REGULAR
+const API_BASE       = import.meta.env.VITE_API_URL ?? ''
 
 export default function Home() {
   const [loading, setLoading] = useState(null) // 'launch' | 'regular' | null
@@ -11,7 +12,7 @@ export default function Home() {
     setLoading(key)
     setError(null)
     try {
-      const res = await fetch('/api/create-checkout-session', {
+      const res = await fetch(`${API_BASE}/api/create-checkout-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ priceId }),
